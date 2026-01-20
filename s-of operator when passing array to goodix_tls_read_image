@@ -1,0 +1,57 @@
+[1mdiff --git a/libfprint/drivers/goodixtls/goodix.c b/libfprint/drivers/goodixtls/goodix.c[m
+[1mindex e928e76..56ce070 100644[m
+[1m--- a/libfprint/drivers/goodixtls/goodix.c[m
+[1m+++ b/libfprint/drivers/goodixtls/goodix.c[m
+[36m@@ -178,7 +178,7 @@[m [mvoid goodix_receive_preset_psk_read(FpDevice *dev, guint8 *data, guint16 length,[m
+     return;[m
+   }[m
+   [m
+[31m-  GoodixPresetPskResponse* response = data + sizeof(guint8);[m
+[32m+[m[32m  GoodixPresetPskResponse* response = (GoodixPresetPskResponse*)(data) + sizeof(guint8);[m
+   psk_len = response->length;[m
+   if (length < psk_len + sizeof(guint8) + sizeof(GoodixPresetPskResponse)) {[m
+     g_set_error(&error, G_IO_ERROR, G_IO_ERROR_INVALID_DATA,[m
+[1mdiff --git a/libfprint/drivers/goodixtls/goodix511.c b/libfprint/drivers/goodixtls/goodix511.c[m
+[1mindex faf7a91..340cf11 100644[m
+[1m--- a/libfprint/drivers/goodixtls/goodix511.c[m
+[1m+++ b/libfprint/drivers/goodixtls/goodix511.c[m
+[36m@@ -593,7 +593,7 @@[m [mstatic void scan_empty_run(FpiSsm* ssm, FpDevice* dev)[m
+ [m
+     case SCAN_EMPTY_GET_IMG: {[m
+         GoodixDefault payload = {.unused_flags = 0x01};[m
+[31m-        goodix_tls_read_image(dev, &payload, sizeof(payload), on_scan_empty_img, ssm);[m
+[32m+[m[32m        goodix_tls_read_image(dev, (guint8*)&payload, sizeof(payload), on_scan_empty_img, ssm);[m
+         break;[m
+     }[m
+     }[m
+[36m@@ -607,7 +607,7 @@[m [mstatic void scan_empty_img(FpDevice* dev, FpiSsm* ssm)[m
+ static void scan_get_img(FpDevice* dev, FpiSsm* ssm)[m
+ {[m
+     GoodixDefault payload = {.unused_flags = 0x01};[m
+[31m-    goodix_tls_read_image(dev, &payload, sizeof(payload), scan_on_read_img, ssm);[m
+[32m+[m[32m    goodix_tls_read_image(dev, (guint8*)&payload, sizeof(payload), scan_on_read_img, ssm);[m
+ }[m
+ [m
+ const guint8 fdt_switch_state_mode[] = {[m
+[1mdiff --git a/libfprint/drivers/goodixtls/goodix52xd.c b/libfprint/drivers/goodixtls/goodix52xd.c[m
+[1mindex 9eb5d70..854c304 100644[m
+[1m--- a/libfprint/drivers/goodixtls/goodix52xd.c[m
+[1m+++ b/libfprint/drivers/goodixtls/goodix52xd.c[m
+[36m@@ -579,7 +579,7 @@[m [mstatic void scan_empty_run(FpiSsm* ssm, FpDevice* dev)[m
+         FpImageDevice* img_dev = FP_IMAGE_DEVICE(dev);[m
+         FpiDeviceGoodixTls52XD* self = FPI_DEVICE_GOODIXTLS52XD(img_dev);[m
+         guint8 payload[] = {0x43, 0x03, self->otp[26] + 6, 0x00, self->otp[26], 0x00, self->otp[45] + 6, 0x00, self->otp[45], 0x00};[m
+[31m-        goodix_tls_read_image(dev, &payload, sizeof(payload), on_scan_empty_img, ssm);[m
+[32m+[m[32m        goodix_tls_read_image(dev, payload, sizeof(payload), on_scan_empty_img, ssm);[m
+         break;[m
+     }[m
+     }[m
+[36m@@ -595,7 +595,7 @@[m [mstatic void scan_get_img(FpDevice* dev, FpiSsm* ssm)[m
+     FpImageDevice* img_dev = FP_IMAGE_DEVICE(dev);[m
+     FpiDeviceGoodixTls52XD* self = FPI_DEVICE_GOODIXTLS52XD(img_dev);[m
+     guint8 payload[] = {0x43, 0x03, self->otp[26] + 6, 0x00, self->otp[26], 0x00, self->otp[45] + 6, 0x00, self->otp[45], 0x00};[m
+[31m-    goodix_tls_read_image(dev, &payload, sizeof(payload), scan_on_read_img, ssm);[m
+[32m+[m[32m    goodix_tls_read_image(dev, payload, sizeof(payload), scan_on_read_img, ssm);[m
+ }[m
+ [m
+ const guint8 fdt_switch_state_mode_52xd[] = {[m
